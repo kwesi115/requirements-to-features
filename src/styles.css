@@ -76,8 +76,8 @@
   --color-warning-foreground: var(--warning-foreground);
   --color-info: var(--info);
   --color-info-foreground: var(--info-foreground);
-  --font-display: var(--font-display);
-  --font-sans: var(--font-body);
+  --font-display: var(--display-family);
+  --font-sans: var(--body-family);
 }
 
 :root {
@@ -120,8 +120,8 @@
   --sidebar-accent-foreground: oklch(0.97 0.01 85);
   --sidebar-border: oklch(0.35 0.04 158);
   --sidebar-ring: oklch(0.8 0.13 75);
-  --font-display: "Fraunces", Georgia, serif;
-  --font-body: "Manrope", system-ui, sans-serif;
+  --display-family: "Fraunces", Georgia, serif;
+  --body-family: "Manrope", system-ui, sans-serif;
 }
 
 .dark {
@@ -173,10 +173,10 @@
   body {
     background-color: var(--color-background);
     color: var(--color-foreground);
-    font-family: var(--font-body);
+    font-family: var(--body-family);
   }
   h1, h2, h3, .font-display {
-    font-family: var(--font-display);
+    font-family: var(--display-family);
     letter-spacing: -0.01em;
   }
 }
