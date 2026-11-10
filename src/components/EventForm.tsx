@@ -20,7 +20,7 @@ export const eventSchema = z.object({
   capacity: z.coerce.number().int("Capacity must be a whole number").min(1, "Capacity must be at least 1").max(10000),
 }).refine((v) => new Date(`${v.date}T${v.time}`) > new Date(), { message: "Event must be in the future", path: ["date"] });
 
-export function EventForm({ event, defaultOrg, registered = 0, onDone }: { event?: Tables<"events">; defaultOrg: string; registered?: number; onDone: () => void }) {
+export function EventForm({ event, defaultOrg, registered = 0, onDone }: { event?: Tables<"events"> | undefined; defaultOrg: string; registered?: number; onDone: () => void }) {
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [busy, setBusy] = useState(false);
   const start = event ? new Date(event.starts_at) : null;
@@ -39,7 +39,7 @@ export function EventForm({ event, defaultOrg, registered = 0, onDone }: { event
     setBusy(true);
     const { error } = event ? await supabase.from("events").update(payload).eq("id", event.id) : await supabase.from("events").insert(payload);
     setBusy(false);
-    if (error) return toast.error(error.message);
+    if (error) { toast.error(error.message); return; }
     toast.success(event ? (event.status === "published" ? "Saved — registered participants were notified" : "Event saved") : "Draft event created");
     onDone();
   }

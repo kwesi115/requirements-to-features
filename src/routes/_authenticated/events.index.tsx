@@ -63,13 +63,13 @@ function StudentEvents({ canRegister }: { canRegister: boolean }) {
 
   async function register(id: string) {
     const { error } = await supabase.from("event_registrations").insert({ event_id: id });
-    if (error) return toast.error(error.message.includes("full") ? "Sorry, this event is full." : error.message);
+    if (error) { toast.error(error.message.includes("full") ? "Sorry, this event is full." : error.message); return; }
     toast.success("You're registered");
     qc.invalidateQueries({ queryKey: ["events"] });
   }
   async function unregister(id: string) {
     const { error } = await supabase.from("event_registrations").delete().eq("event_id", id);
-    if (error) return toast.error(error.message);
+    if (error) { toast.error(error.message); return; }
     toast.success("Registration cancelled");
     qc.invalidateQueries({ queryKey: ["events"] });
   }
@@ -124,14 +124,14 @@ function LeaderEvents({ orgName, userId }: { orgName: string; userId: string }) 
 
   async function setStatus(e: Ev, status: "published" | "cancelled") {
     const { error } = await supabase.from("events").update({ status }).eq("id", e.id);
-    if (error) return toast.error(error.message);
+    if (error) { toast.error(error.message); return; }
     toast.success(status === "published" ? "Event published" : "Event cancelled — participants notified");
     setCancelling(null);
     refresh();
   }
   async function remove(e: Ev) {
     const { error } = await supabase.from("events").delete().eq("id", e.id);
-    if (error) return toast.error(error.message);
+    if (error) { toast.error(error.message); return; }
     refresh();
   }
 

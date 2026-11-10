@@ -23,7 +23,7 @@ export const entrySchema = z.object({
 
 const ACCEPT = "image/*,application/pdf";
 
-export function EntryForm({ entry, userId, onDone }: { entry?: Tables<"volunteer_entries">; userId: string; onDone: () => void }) {
+export function EntryForm({ entry, userId, onDone }: { entry?: Tables<"volunteer_entries"> | undefined; userId: string; onDone: () => void }) {
   const [orgType, setOrgType] = useState(entry?.org_type ?? "Nonprofit");
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [busy, setBusy] = useState(false);
@@ -51,10 +51,10 @@ export function EntryForm({ entry, userId, onDone }: { entry?: Tables<"volunteer
     let evidence_path = entry?.evidence_path ?? null;
     const file = f.get("evidence") as File | null;
     if (file && file.size > 0) {
-      if (file.size > 10 * 1024 * 1024) { setBusy(false); return toast.error("Evidence must be under 10 MB"); }
+      if (file.size > 10 * 1024 * 1024) { setBusy(false); { toast.error("Evidence must be under 10 MB"); return; } }
       const path = `${userId}/${crypto.randomUUID()}-${file.name.replace(/[^\w.-]/g, "_")}`;
       const { error } = await supabase.storage.from("evidence").upload(path, file);
-      if (error) { setBusy(false); return toast.error("Upload failed: " + error.message); }
+      if (error) { setBusy(false); { toast.error("Upload failed: " + error.message); return; } }
       evidence_path = path;
     }
     const payload = { ...parsed.data, evidence_path, status };
@@ -62,7 +62,7 @@ export function EntryForm({ entry, userId, onDone }: { entry?: Tables<"volunteer
       ? await supabase.from("volunteer_entries").update(payload).eq("id", entry.id)
       : await supabase.from("volunteer_entries").insert(payload);
     setBusy(false);
-    if (error) return toast.error(error.message);
+    if (error) { toast.error(error.message); return; }
     toast.success(status === "pending" ? "Submitted — Pending Verification" : "Draft saved");
     onDone();
   }

@@ -52,7 +52,7 @@ function Hours() {
 
   async function remove(e: Entry) {
     const { error } = await supabase.from("volunteer_entries").delete().eq("id", e.id);
-    if (error) return toast.error(error.message);
+    if (error) { toast.error(error.message); return; }
     if (e.evidence_path) await supabase.storage.from("evidence").remove([e.evidence_path]);
     toast.success("Entry removed");
     setDeleting(null);

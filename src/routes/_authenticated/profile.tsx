@@ -33,14 +33,14 @@ function Profile() {
     e.preventDefault();
     const f = new FormData(e.currentTarget);
     const parsed = schema.safeParse({ full_name: f.get("full_name"), summary: f.get("summary") ?? "", organization_name: f.get("organization_name") ?? "" });
-    if (!parsed.success) return toast.error(parsed.error.issues[0].message);
+    if (!parsed.success) { toast.error(parsed.error.issues[0]?.message ?? "Invalid input"); return; }
     const { error } = await supabase.from("profiles").update({
       ...parsed.data,
       skills: list(String(f.get("skills") ?? "")),
       causes: list(String(f.get("causes") ?? "")),
       recruiter_visible: isStudent ? visible : false,
     }).eq("id", me!.user.id);
-    if (error) return toast.error(error.message);
+    if (error) { toast.error(error.message); return; }
     toast.success("Profile saved");
     qc.invalidateQueries({ queryKey: ["me"] });
   }

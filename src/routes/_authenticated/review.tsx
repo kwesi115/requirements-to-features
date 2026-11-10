@@ -43,11 +43,11 @@ function Review() {
 
   async function decide(decision: EntryStatus) {
     if (!entry) return;
-    if (reasonRequired(decision) && !reason.trim()) return toast.error("Write an explanation before rejecting or flagging.");
+    if (reasonRequired(decision) && !reason.trim()) { toast.error("Write an explanation before rejecting or flagging."); return; }
     setBusy(true);
     const { error } = await supabase.from("volunteer_entries").update({ status: decision, review_reason: reason.trim().slice(0, 1000) || null }).eq("id", entry.id);
     setBusy(false);
-    if (error) return toast.error(error.message);
+    if (error) { toast.error(error.message); return; }
     toast.success(decision === "verified" ? "Entry verified" : decision === "rejected" ? "Entry rejected" : "Entry flagged");
     setReason(""); setSelected(null);
     qc.invalidateQueries({ queryKey: ["review"] });

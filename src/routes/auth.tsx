@@ -55,7 +55,7 @@ function AuthPage() {
     setBusy(true);
     const { error } = await supabase.auth.signInWithPassword({ email: String(f.get("email")), password: String(f.get("password")) });
     setBusy(false);
-    if (error) return toast.error(error.message);
+    if (error) { toast.error(error.message); return; }
     navigate({ to: "/dashboard" });
   }
 
@@ -63,7 +63,7 @@ function AuthPage() {
     e.preventDefault();
     const f = new FormData(e.currentTarget);
     const parsed = signUpSchema.safeParse({ fullName: f.get("fullName"), email: f.get("email"), password: f.get("password") });
-    if (!parsed.success) return toast.error(parsed.error.issues[0].message);
+    if (!parsed.success) { toast.error(parsed.error.issues[0]?.message ?? "Invalid input"); return; }
     setBusy(true);
     const { data, error } = await supabase.auth.signUp({
       email: parsed.data.email,
@@ -74,7 +74,7 @@ function AuthPage() {
       },
     });
     setBusy(false);
-    if (error) return toast.error(error.message);
+    if (error) { toast.error(error.message); return; }
     if (data.session) navigate({ to: "/dashboard" });
     else setSent(true);
   }

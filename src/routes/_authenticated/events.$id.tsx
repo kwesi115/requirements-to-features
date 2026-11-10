@@ -33,7 +33,7 @@ function Roster() {
 
   async function mark(regId: string, attended: boolean) {
     const { error } = await supabase.from("event_registrations").update({ attended }).eq("id", regId);
-    if (error) return toast.error(error.message);
+    if (error) { toast.error(error.message); return; }
     if (attended) toast.success("Marked present — a draft hours entry was added to the student's record");
     qc.invalidateQueries({ queryKey: ["roster", id] });
   }
