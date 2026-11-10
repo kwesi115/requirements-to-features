@@ -24,12 +24,13 @@ function Discover() {
   const { data = [], isFetching } = useQuery({
     queryKey: ["discover", minHours, cause, skill, orgType],
     enabled: me?.role === "recruiter" || me?.role === "admin",
-    queryFn: async () => (await supabase.rpc("search_students", {
-      _min_hours: Math.max(0, Number(minHours) || 0),
-      _cause: cause.trim() || undefined,
-      _skill: skill.trim() || undefined,
-      _org_type: orgType === "any" ? undefined : orgType,
-    })).data ?? [],
+    queryFn: async () => {
+      const args: { _min_hours: number; _cause?: string; _skill?: string; _org_type?: string } = { _min_hours: Math.max(0, Number(minHours) || 0) };
+      if (cause.trim()) args._cause = cause.trim();
+      if (skill.trim()) args._skill = skill.trim();
+      if (orgType !== "any") args._org_type = orgType;
+      return (await supabase.rpc("search_students", args)).data ?? [];
+    },
   });
   if (me && me.role !== "recruiter" && me.role !== "admin") return <Empty>Only recruiters can discover students.</Empty>;
   return (

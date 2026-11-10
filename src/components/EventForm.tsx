@@ -31,7 +31,7 @@ export function EventForm({ event, defaultOrg, registered = 0, onDone }: { event
     const parsed = eventSchema.safeParse(f);
     const errs: Record<string, string> = {};
     if (!parsed.success) parsed.error.issues.forEach((i) => (errs[String(i.path[0])] = i.message));
-    else if (parsed.data.capacity < registered) errs.capacity = `Capacity can't be below the ${registered} people already registered`;
+    else if (parsed.data.capacity < registered) errs["capacity"] = `Capacity can't be below the ${registered} people already registered`;
     setErrors(errs);
     if (!parsed.success || Object.keys(errs).length) return;
     const { date, time, ...rest } = parsed.data;
