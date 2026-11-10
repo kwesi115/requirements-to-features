@@ -1,4 +1,4 @@
-import { createFileRoute, Link } from "@tanstack/react-router";
+import { createFileRoute } from "@tanstack/react-router";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { formatDistanceToNow } from "date-fns";
 import { supabase } from "@/integrations/supabase/client";
@@ -36,7 +36,7 @@ function Notifications() {
                 <div className="text-sm text-muted-foreground">{n.body}</div>
                 <div className="mt-1 text-xs text-muted-foreground">{formatDistanceToNow(new Date(n.created_at), { addSuffix: true })}</div>
               </div>
-              {n.link && <Button asChild size="sm" variant="ghost" onClick={() => markOne(n.id)}><Link to={n.link}>Open</Link></Button>}
+              {n.link && <Button asChild size="sm" variant="ghost" onClick={() => markOne(n.id)}><a href={n.link}>Open</a></Button>}
               {!n.read && <Button size="sm" variant="ghost" onClick={() => markOne(n.id)}>Mark read</Button>}
             </li>
           ))}
