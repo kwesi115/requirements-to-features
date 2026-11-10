@@ -51,7 +51,7 @@ function EventMeta({ e }: { e: Ev & { registered: number } }) {
 function Events() {
   const { data: me } = useMe();
   if (!me) return null;
-  return me.role === "org_leader" ? <LeaderEvents orgName={me.profile?.organization_name ?? ""} /> : <StudentEvents canRegister={me.role === "student"} />;
+  return me.role === "org_leader" ? <LeaderEvents userId={me.user.id} orgName={me.profile?.organization_name ?? ""} /> : <StudentEvents canRegister={me.role === "student"} />;
 }
 
 function StudentEvents({ canRegister }: { canRegister: boolean }) {
@@ -114,9 +114,10 @@ function StudentEvents({ canRegister }: { canRegister: boolean }) {
   );
 }
 
-function LeaderEvents({ orgName }: { orgName: string }) {
+function LeaderEvents({ orgName, userId }: { orgName: string; userId: string }) {
   const qc = useQueryClient();
-  const { data = [] } = useEvents();
+  const { data: all = [] } = useEvents();
+  const data = all.filter((e) => e.leader_id === userId);
   const [editing, setEditing] = useState<(Ev & { registered: number }) | "new" | null>(null);
   const [cancelling, setCancelling] = useState<Ev | null>(null);
   const refresh = () => qc.invalidateQueries({ queryKey: ["events"] });
